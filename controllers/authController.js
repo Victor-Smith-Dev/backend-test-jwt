@@ -15,8 +15,7 @@ module.exports.login = ( req, res ) => {
         
         User.findOne(user_data, ( err, doc ) => {
 			if ( doc ) {
-				//req.session.user_id = doc._id;
-                jwt.sign({ user_data }, 'secretkey', { expiresIn: '30s' }, (err, token) => {
+                jwt.sign({ user_data }, process.env.JWTKEY, { expiresIn: 60 * 60 * 24 }, (err, token) => {
 
                     var data_response = {
                         message : cMessages.SUCCESS,

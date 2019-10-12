@@ -1,27 +1,36 @@
 const cAuth = require('../constants/auth')
 const cMessages = require('../constants/messages')
+const jwt = require('jsonwebtoken')
 
 module.exports = (req, res, next) => {
 
-  const bearerHeader = req.headers['authorization'];
+  var token = req.headers['authorization']
 
-  if ( typeof bearerHeader !== 'undefined' ) {
-    const bearer = bearerHeader.split(' ');
-    const bearerToken = bearer[1];
-    req.token = bearerToken
-
-    next();
-
-  } else {
-
+  if ( !token ) {
     const data_response = {
-        message : cMessages.ERROR,
-        data : {
-            text : cAuth.UNAUTHORIZED
-        }
+      message : cMessages.ERROR,
+      data : {
+       text : cAuth.UNAUTHORIZED
+      }
     }   
-    
+
     res.status( 401 ).json( data_response )
+  } else {
+    token = token.replace('Bearer ', '')
+
+    jwt.verify ( token, process.env.JWTKEY, function(err, user) {
+      if ( err ) {
+        const data_response = {
+          message : cMessages.ERROR,
+          data : {
+           text : cAuth.INVALID_PAYLOAD
+          }
+        }  
+        res.status( 400 ).json( data_response )
+      } else {
+        next();
+      }
+    }) 
   }
   
 }
