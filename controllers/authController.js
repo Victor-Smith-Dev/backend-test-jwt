@@ -54,11 +54,10 @@ module.exports.login = ( req, res ) => {
  */
 module.exports.register = ( req, res ) => {
     if ( req.method == 'POST' ) {
-
+        
+        const { name, email, password } = req.query;
         var user_data = {
-            name : req.query.name,
-            email : req.query.email,
-            password : req.query.password
+            name, email, password
         }
 
         var user = new User( user_data );

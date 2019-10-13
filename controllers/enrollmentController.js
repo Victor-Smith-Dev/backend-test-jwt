@@ -1,58 +1,100 @@
+const mongoose = require("mongoose")
 const Enrollment =  require('../models/enrollment')
 const cMessages = require('../constants/messages')
 const cEnrollment = require('../constants/enrollment')
-/**
- * 
- */
-module.exports.list = (req, res) => {
 
+/**
+ * Students con credits superior a 50
+ */
+module.exports.listStudentsWithCredits50 = async (req, res) => {
+    try {        
+        const result = await Enrollment.find({'students.credits': {$gt: 50}})
+        .populate('course', 'name' )
+        .populate('students.student', 'name')
+        .sort({ name: 1 })
+        .exec();
+
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(500);
+    }
+}
+
+/**
+ * Students, sus courses y créditos
+ */
+module.exports.listByStudentId = async (req, res) => {
+    const { id } = req.params
+    console.log(id);
+    
+    try {        
+        const result = await Enrollment.find({'students.student': id})
+        .populate('course', 'name' )
+        .sort({ name: 1 })
+        .exec();
+
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(500);
+    }
+}
+/**
+ * Course, sus students y credits
+ */
+module.exports.listCourseStudentsCredits = async (req, res) => {
+    let { id } = req.params
+    id = mongoose.Types.ObjectId(id)
+    try {        
+        const result = await Enrollment.find({'course': id})
+        .populate('course', 'name' )
+        .populate('students.student', 'name')
+        .sort({ name: 1 })
+        .exec();
+
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(500);
+    }
+}
+/**
+ * Course, sus students y credits
+ */
+module.exports.list = async (req, res) => {
+    let { id } = req.params
+    id = mongoose.Types.ObjectId(id)
+    try {        
+        const result = await Enrollment.find()
+        .populate('course', 'name' )
+        .populate('students.student', 'name')
+        .exec();
+
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(500);
+    }
 }
 /**
  * 
  */
-module.exports.create = (req, res) => {
-    if (  req.method == 'POST') {
+module.exports.create = async (req, res) => {
+    const { course , students } = req.body;
         
-        var enrollment_data = {
-            course : req.query.course_id,
-            students : req-query.student_id
-        }
+    const enrollment = new Enrollment({
+        course, students
+    });
 
-        var student = new Student( enrollment_data );
+    try {
 
-        enrollment.save ()
-            .then ( 
-                doc => {
-                    var response_data = {
-                        message : cMessages.SUCCESS,
-                        data : {
-                            enrollment : doc,
-                            text : cEnrollment.STUDENT_CREATED
-                        }
-                    }
-                    res.status( 200 ).json( response_data )
-                },
-                err => {
-                    if ( err ) { 
-                        var response_data = {
-                            message : cMessages.ERROR,
-                            data : {
-                                error : err,
-                                text : cEnrollment.STUDENT_NO_CREATED
-                            }
-                        }
-                        res.status( 401 ).json( response_data )
-                    }
-                }
-            )
-    } else {
-        var data_response = {
-            message : cMessages.ERROR,
-            data : {
-                text : cMessages.FORBIDDEN
-            }
-        }   
-        
-        res.status( 401 ).json( data_response )      
+        const result = await enrollment.save();
+        console.log(result);
+        res.status( 201 ).json({});
+
+    } catch ( error ) {
+        console.log( error );
+        res.status( 500 );
     }
+}
+
+module.exports.deleteAll = async (req, res) => {
+
 }

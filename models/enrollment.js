@@ -1,17 +1,26 @@
 const mongoose = require("mongoose")
 const Schema = mongoose.Schema
+
+const credits_schema = new Schema ({
+    credits : {
+        type : Number
+    },
+    student : {
+        type : Schema.Types.ObjectId,
+        ref : "Student"      
+    }
+}, { _id:false });
 /**
  * 
  */
-var enrollment_schema = new Schema({
+const enrollment_schema = new Schema({
     course : {
         type : Schema.Types.ObjectId,
 		ref : "Course"
     },
     students : [
-        {
-            type : Schema.Types.ObjectId,
-		    ref : "Student"        
+        { 
+            type: credits_schema,
         }
     ]
 })

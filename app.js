@@ -9,6 +9,7 @@ const usersRouter = require('./routes/users')
 const authRouter = require('./routes/auth')
 const studentRouter = require('./routes/student')
 const courseRouter = require('./routes/course')
+const enrollmentRouter = require('./routes/enrollment')
 
 var app = express()
 
@@ -26,6 +27,7 @@ app.use('/api/v1/auth', authRouter)
 app.use('/api/v1/users', usersRouter)
 app.use('/api/v1/students', studentRouter)
 app.use('/api/v1/courses', courseRouter)
+app.use('/api/v1/enrollment', enrollmentRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
