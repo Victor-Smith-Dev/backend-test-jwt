@@ -17,7 +17,7 @@
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^8.5.1",
     "mocha": "^6.2.1",
-    "mongoose": "^5.7.4",
+    "mongoose": "^5.7.5",
     "morgan": "~1.9.1",
     "pug": "2.0.0-beta11",
     "supertest": "^4.0.2"
